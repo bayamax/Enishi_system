@@ -13,7 +13,7 @@ SEEDS = ["123456789", "987654321"]  # シードユーザーIDを適宜指定
 API_BASE = "https://api.twitter.com/2"
 USER_FIELDS = "id,username"
 
-# 出力ファイル
+# 出力ファイル名を"edges_full.csv"で統一
 EDGES_FILE = "edges_full.csv"
 VISITED_FILE = "visited_users.csv"
 QUEUE_FILE = "queue_users.csv"
@@ -119,43 +119,32 @@ def main():
                 folls, token = fetch_followers(user_id, max_results=MAX_RESULTS, pagination_token=next_token)
                 if not folls:
                     break
-                # followersのフォロワー関係: follower -> user_id
-                # edges: (follower_id, user_id)
+                # followersのフォローネットワーク: follower -> user_id
                 for f in folls:
                     fid = f["id"]
                     all_edges.append((fid, user_id))
-                    # 新規ユーザーをqueueに入れる（既出でなければ）
                     if fid not in visited:
-                        # すぐには取得しないが後で巡回
                         queue.append(fid)
 
                 if token is None:
                     break
                 next_token = token
                 count += len(folls)
-                # 過剰な拡大を避ける場合、ある程度で中断可能
                 if count > 10000:
                     break
 
-            # エッジ追記
             if all_edges:
                 append_to_csv(EDGES_FILE, all_edges)
                 print(f"Appended {len(all_edges)} edges from {user_id}.")
 
-            # visitedに追加
             append_to_csv(VISITED_FILE, [[user_id]])
             visited.add(user_id)
 
-        # キュー保存
-        # ユーザーを追加したので更新
-        # 重複ユーザーはvisitedでガード
-        # queue保存
         unique_queue = [u for u in queue if u not in visited]
         queue = unique_queue
-        # 別途保存
         if queue:
-            # 上書き保存
-            os.remove(QUEUE_FILE)
+            if os.path.isfile(QUEUE_FILE):
+                os.remove(QUEUE_FILE)
             append_to_csv(QUEUE_FILE, [[u] for u in queue], header=["user_id"])
         else:
             ensure_file(QUEUE_FILE, header=["user_id"])
