@@ -3,7 +3,7 @@ import numpy as np
 from node2vec import Node2Vec
 import csv
 
-EDGE_FILE = 'edges.csv'
+EDGE_FILE = 'edges_full.csv'  # 修正: 'edges.csv'→'edges_full.csv'
 OUTPUT_VEC_FILE = 'account_vectors.npy'
 WALKS_FILE = 'walks.txt'
 
