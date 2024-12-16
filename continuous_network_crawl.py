@@ -1,48 +1,47 @@
-import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# Twitter APIのBearer Tokenをここに設定してください
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAE4YxgEAAAAAh%2BZjdZibO5q8Yuo8bQxfQIrEKH0%3D8EgIPuTWRtoNBB82q7AgBV61eDoDbblY4BUrbIUpWOkDKZXVdU"
+# Chrome WebDriverのパスを指定
+driver_path = 'path/to/chromedriver'
 
+# WebDriverの初期化
+driver = webdriver.Chrome(executable_path=driver_path)
 
-# APIリクエストのヘッダー
-headers = {
-    "Authorization": f"Bearer {bearer_token}"
-}
+# ユーザーページにアクセス
+user_id = "THE_USER_ID_HERE"
+url = f"https://twitter.com/{user_id}/followers"
+driver.get(url)
 
-def get_user_followers(user_id):
-    url = f"https://api.twitter.com/2/users/{user_id}/followers"
-    params = {
-        "max_results": 1000,
-        "user.fields": "id"
-    }
-    response = requests.get(url, headers=headers, params=params)
-    if response.status_code != 200:
-        raise Exception(f"Request returned an error: {response.status_code} {response.text}")
-    return [follower['id'] for follower in response.json()['data']]
+followers = []
 
-def get_followers_for_multiple_users(user_ids):
-    all_followers = set()
-    for user_id in user_ids:
-        followers = get_user_followers(user_id)
-        all_followers.update(followers)
-    return list(all_followers)
+try:
+    # フォロワーリストが表示されるまで待機
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='UserCell']"))
+    )
 
-def main():
-    # スタートユーザーのIDを設定
-    start_user_id = "1782363447843491840"
-    
-    # 1ホップのフォロワーを取得
-    first_hop_followers = get_user_followers(start_user_id)
-    print(f"1 hop followers: {len(first_hop_followers)}")
+    # スクロールして全てのフォロワーを読み込む
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        # スクロール
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)  # 読み込み待ち
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            break
+        last_height = new_height
 
-    # 2ホップのフォロワーを取得
-    second_hop_followers = get_followers_for_multiple_users(first_hop_followers)
-    print(f"2 hop followers: {len(second_hop_followers)}")
+    # フォロワーのユーザー名を抽出
+    follower_elements = driver.find_elements(By.CSS_SELECTOR, "[data-testid='UserCell']")
+    for element in follower_elements:
+        user_link = element.find_element(By.CSS_SELECTOR, "a[role='link']").get_attribute('href')
+        followers.append(user_link.split('/')[-1])
 
-    # 結果を表示（全フォロワーのIDをリストアップ）
-    all_followers = first_hop_followers + second_hop_followers
-    print(f"All followers (1st and 2nd hop): {len(all_followers)}")
+finally:
+    driver.quit()
 
-if __name__ == "__main__":
-    main()
+print(f"フォロワー数: {len(followers)}")
+print(followers)
