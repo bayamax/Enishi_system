@@ -2,7 +2,8 @@ import requests
 import time
 
 # Twitter APIのBearer Tokenをここに設定してください
-bearer_token = "YOUR_BEARER_TOKEN_HERE"
+bearer_token = "AAAAAAAAAAAAAAAAAAAAAE4YxgEAAAAAh%2BZjdZibO5q8Yuo8bQxfQIrEKH0%3D8EgIPuTWRtoNBB82q7AgBV61eDoDbblY4BUrbIUpWOkDKZXVdU"
+
 
 # APIリクエストのヘッダー
 headers = {
@@ -29,7 +30,7 @@ def get_followers_for_multiple_users(user_ids):
 
 def main():
     # スタートユーザーのIDを設定
-    start_user_id = "THE_USER_ID_HERE"
+    start_user_id = "1782363447843491840"
     
     # 1ホップのフォロワーを取得
     first_hop_followers = get_user_followers(start_user_id)
