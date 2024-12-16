@@ -11,7 +11,7 @@ driver_path = 'path/to/chromedriver'
 driver = webdriver.Chrome(executable_path=driver_path)
 
 # ユーザーページにアクセス
-user_id = "THE_USER_ID_HERE"
+user_id = "1782363447843491840"
 url = f"https://twitter.com/{user_id}/followers"
 driver.get(url)
 
