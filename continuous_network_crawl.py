@@ -1,18 +1,25 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
 import time
 
-# Chrome WebDriverのパスを指定
+# Chromeのオプション設定（ヘッドレスモード）
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--headless")  # 画面表示なし
+chrome_options.add_argument("--no-sandbox")  # 必須オプション
+chrome_options.add_argument("--disable-dev-shm-usage")  # メモリ不足対策
+chrome_options.add_argument("--remote-debugging-port=9222")  # デバッグポート
+
+# ChromeDriverのサービスを指定
 driver_path = '/usr/local/bin/chromedriver'
 service = Service(driver_path)
 
 # WebDriverの初期化
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
-# ユーザーページにアクセス
+# テスト開始
 user_id = "1782363447843491840"
 url = f"https://twitter.com/{user_id}/followers"
 driver.get(url)
