@@ -2,13 +2,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 import time
 
-# Chrome WebDriverのパスを
+# Chrome WebDriverのパスを指定
 driver_path = '/usr/local/bin/chromedriver'
+service = Service(driver_path)
 
 # WebDriverの初期化
-driver = webdriver.Chrome(executable_path=driver_path)
+driver = webdriver.Chrome(service=service)
 
 # ユーザーページにアクセス
 user_id = "1782363447843491840"
@@ -26,9 +28,8 @@ try:
     # スクロールして全てのフォロワーを読み込む
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
-        # スクロール
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)  # 読み込み待ち
+        time.sleep(2)
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
             break
