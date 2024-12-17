@@ -49,7 +49,7 @@ try:
 
     # フォロワーリンクを取得
     followers = []
-    follower_elements = driver.find_elements(By.XPATH, "//div[@data-testid='UserCell']//a")
+    follower_elements = driver.find_elements(By.XPATH, "//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div[1]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div[1]/a/div/div/span")
     for element in follower_elements:
         user_link = element.get_attribute("href")
         print("取得したリンク:", user_link)
