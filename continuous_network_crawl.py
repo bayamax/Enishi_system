@@ -4,8 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# Chrome WebDriverのパスを指定
-driver_path = 'path/to/chromedriver'
+# Chrome WebDriverのパスを
+driver_path = '/usr/local/bin/chromedriver'
 
 # WebDriverの初期化
 driver = webdriver.Chrome(executable_path=driver_path)
