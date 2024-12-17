@@ -1,25 +1,21 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 import time
 
-# Chromeのオプション設定（ヘッドレスモード）
+# Chromeオプション設定
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--headless")  # 画面表示なし
-chrome_options.add_argument("--no-sandbox")  # 必須オプション
-chrome_options.add_argument("--disable-dev-shm-usage")  # メモリ不足対策
-chrome_options.add_argument("--remote-debugging-port=9222")  # デバッグポート
+chrome_options.add_argument("--headless")  # ヘッドレスモード（画面表示なし）
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
 
-# ChromeDriverのサービスを指定
-driver_path = '/usr/local/bin/chromedriver'
-service = Service(driver_path)
-
-# WebDriverの初期化
+# ChromeDriverのサービス指定
+service = Service('/usr/local/bin/chromedriver')
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-# テスト開始
+# Twitterのフォロワーページにアクセス
 user_id = "1782363447843491840"
 url = f"https://twitter.com/{user_id}/followers"
 driver.get(url)
@@ -28,8 +24,8 @@ followers = []
 
 try:
     # フォロワーリストが表示されるまで待機
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='UserCell']"))
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.XPATH, "//div[@data-testid='UserCell']//a"))
     )
 
     # スクロールして全てのフォロワーを読み込む
@@ -43,9 +39,9 @@ try:
         last_height = new_height
 
     # フォロワーのユーザー名を抽出
-    follower_elements = driver.find_elements(By.CSS_SELECTOR, "[data-testid='UserCell']")
+    follower_elements = driver.find_elements(By.XPATH, "//div[@data-testid='UserCell']//a")
     for element in follower_elements:
-        user_link = element.find_element(By.CSS_SELECTOR, "a[role='link']").get_attribute('href')
+        user_link = element.get_attribute("href")
         followers.append(user_link.split('/')[-1])
 
 finally:
