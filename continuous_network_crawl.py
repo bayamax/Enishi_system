@@ -60,8 +60,8 @@ def get_twitter_cookies():
 # --- requestsでHTMLを取得＆ファイル保存 ---
 def get_followers_html(cookies):
     session = requests.Session()
-    for name, value in cookies.items():
-        session.cookies.set(name, value)
+    #for name, value in cookies.items():
+        #session.cookies.set(name, value)
 
     response = session.get(FOLLOWER_URL, headers=HEADERS)
     if response.status_code == 200:
