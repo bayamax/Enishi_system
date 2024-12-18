@@ -42,17 +42,17 @@ def get_twitter_cookies():
         print("Twitterのホームページにアクセスしました。")
 
         # クッキーを設定
-        for cookie in cookies:
-            driver.add_cookie(cookie)
+        #for cookie in cookies:
+            #driver.add_cookie(cookie)
 
         # クッキー適用後、フォロワーページにアクセス
         driver.get(FOLLOWER_URL)
         print("クッキーを適用し、フォロワーページにアクセスしました。")
 
         # Seleniumで取得したクッキーをrequests用に変換
-        session_cookies = {cookie['name']: cookie['value'] for cookie in driver.get_cookies()}
-        print("クッキーをrequests用に取得しました。")
-        return session_cookies
+        #session_cookies = {cookie['name']: cookie['value'] for cookie in driver.get_cookies()}
+        #print("クッキーをrequests用に取得しました。")
+        #return session_cookies
 
     finally:
         driver.quit()
