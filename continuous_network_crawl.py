@@ -17,7 +17,7 @@ cookies = [
 ]
 
 # ターゲットのフォロワーページURL
-TARGET_USER_ID = "1782363447843491840"  # ユーザーID
+TARGET_USER_ID = "cloudproject_ad"  # ユーザーID
 FOLLOWER_URL = f"https://twitter.com/{TARGET_USER_ID}/followers"
 
 # ユーザーエージェント設定
