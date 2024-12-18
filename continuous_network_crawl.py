@@ -16,8 +16,8 @@ cookies = [
     {"name": "twid", "value": "u%3D1782363447843491840"}
 ]
 
-# ターゲットのフォロワーページ
-TARGET_USER_ID = "1782363447843491840"
+# ターゲットのフォロワーページURL
+TARGET_USER_ID = "1782363447843491840"  # ユーザーID
 FOLLOWER_URL = f"https://twitter.com/{TARGET_USER_ID}/followers"
 
 # ユーザーエージェント設定
@@ -45,7 +45,7 @@ def get_twitter_cookies():
         for cookie in cookies:
             driver.add_cookie(cookie)
 
-        # クッキー適用後、再読み込み
+        # クッキー適用後、フォロワーページにアクセス
         driver.get(FOLLOWER_URL)
         print("クッキーを適用し、フォロワーページにアクセスしました。")
 
@@ -57,7 +57,7 @@ def get_twitter_cookies():
     finally:
         driver.quit()
 
-# --- requestsでフォロワーページのHTMLを取得 ---
+# --- requestsでHTMLを取得＆ファイル保存 ---
 def get_followers_html(cookies):
     session = requests.Session()
     for name, value in cookies.items():
@@ -66,6 +66,12 @@ def get_followers_html(cookies):
     response = session.get(FOLLOWER_URL, headers=HEADERS)
     if response.status_code == 200:
         print("フォロワーページのHTMLを取得しました。")
+
+        # HTMLをファイルに保存して内容を確認
+        with open("followers_page.html", "w", encoding="utf-8") as file:
+            file.write(response.text)
+        print("HTMLをfollowers_page.htmlに保存しました。")
+
         return response.text
     else:
         print(f"HTML取得に失敗しました。ステータスコード: {response.status_code}")
