@@ -166,5 +166,5 @@ def recursive_fetch(account_name, depth=1, max_depth=3):
 
 if __name__ == "__main__":
     # 初期アカウント名を指定
-    start_account = "innovator_nao"
+    start_account = "nori_sol1"
     recursive_fetch(start_account)
