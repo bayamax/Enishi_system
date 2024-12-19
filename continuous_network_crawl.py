@@ -8,11 +8,12 @@ import os
 CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 
 # 手動で取得したクッキー情報
-cookies = {
-    "auth_token": "22c906d59549e6170f01145240c86e20be68e07a",
-    "ct0": "e2c8a89989ae0b594093a03b70d132d59bdc575c3d80d9436337d1437036b95",
-    "twid": "u%3D1782363447843491840"
-}
+cookies = [
+    {"name": "auth_token", "value": "22c906d59549e6170f01145240c86e20be68e07a"},
+    {"name": "ct0", "value": "e2c8a89989ae0b594093a03b70d132d59bdc575c3d80d9436337d1437036b95"},
+    {"name": "twid", "value": "u%3D1782363447843491840"}
+]
+
 
 
 # Seleniumの初期設定
