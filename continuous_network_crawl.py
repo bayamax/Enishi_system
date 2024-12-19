@@ -1,82 +1,165 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
 import time
+import os
 
 # ChromeDriverのパス設定
-CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
+CHROME_DRIVER_PATH = "/opt/homebrew/bin/chromedriver"
 
 # 手動で取得したクッキー情報
 cookies = [
-    {"name": "auth_token", "value": "9a604e4fff4c52f910bdccdb783178695577f109"},
-    {"name": "ct0", "value": "18d9b526a83508c2cc02007bff6b32deb187a92c1c645283189bc1babbbef59a4dfff4703595b8adbe382c04cbf9fd25bc5402f4b4db8b3b7247d2649d163206a"},
+    {"name": "auth_token", "value": "f3c2064a2afcdbcab3a69771958b4f446cf44863"},
+    {"name": "ct0", "value": "80d3c1a36b120617f23ef11ed2420e5924dad0147aa1bbad09378cc3ec22f0b6b3a87c51e7ba148b7ebd2ba0267a92a164fe23f99ad2c86cce831dfdf77174efd20cc873f463f11f513e3ef4e6d370f0"},
     {"name": "twid", "value": "u%3D1782363447843491840"}
 ]
 
-# ターゲットユーザーID
-USERNAME = "cloudproject_ad"
-FOLLOWER_URL = f"https://twitter.com/{USERNAME}/followers"
-
 # Seleniumの初期設定
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+chrome_options.add_experimental_option("useAutomationExtension", False)
 
-def fetch_followers_with_selenium():
+# 探索済みアカウントを保存するファイル
+explored_accounts_file = "explored_accounts.txt"
+
+
+def load_explored_accounts():
+    """
+    ファイルから探索済みアカウント名を読み込む。
+    """
+    if not os.path.exists(explored_accounts_file):
+        return set()
+
+    with open(explored_accounts_file, "r", encoding="utf-8") as file:
+        return set(line.strip() for line in file.readlines())
+
+
+def save_explored_account(account_name):
+    """
+    探索済みアカウント名をファイルに追加する。
+    """
+    with open(explored_accounts_file, "a", encoding="utf-8") as file:
+        file.write(account_name + "\n")
+
+
+def scroll_until_loaded(driver, max_scrolls=100):
+    """
+    ページの高さが変化しなくなるまでスクロールを繰り返す。
+    max_scrolls: 最大スクロール回数（無限ループ防止用）
+    """
+    scrolls = 0
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while scrolls < max_scrolls:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(3)
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            print("ページの高さが変化しないため、スクロールを停止します。")
+            break
+        last_height = new_height
+        scrolls += 1
+    print(f"最大スクロール回数: {scrolls}/{max_scrolls}")
+
+
+def fetch_following(account_name):
+    """
+    指定されたアカウントのフォローリストを取得し、ファイルに保存する。
+    """
+    explored_accounts = load_explored_accounts()
+
+    if account_name in explored_accounts:
+        print(f"すでに探索済みのアカウント: {account_name}")
+        return []
+
     service = Service(CHROME_DRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
-        # Twitterのホームページにアクセス
-        driver.get("https://twitter.com")
-        print("Twitterのホームページにアクセスしました。")
+        # フォローリストページのURL
+        url = f"https://x.com/{account_name}/following"
+        print(f"フォローしている人のページにアクセスします: {url}")
+
+        driver.get("https://x.com")
+        time.sleep(10)
 
         # クッキーを追加
         for cookie in cookies:
             driver.add_cookie(cookie)
 
-        # クッキー適用後、フォローページにアクセス
-        driver.get(FOLLOWER_URL)
-        print(f"フォローページにアクセスしました: {FOLLOWER_URL}")
+        # フォローリストページにアクセス
+        driver.get(url)
+        time.sleep(10)
 
-        # リダイレクトされたURLを確認
-        current_url = driver.current_url
-        if current_url != FOLLOWER_URL:
-            print(f"リダイレクトされています: {current_url}")
-            return None
+        # ページをスクロールして全てのフォローをロード
+        scroll_until_loaded(driver, max_scrolls=100)
 
-        # 要素が読み込まれるまで待機
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@data-testid='UserCell']"))
-        )
+        # ページのフォロー情報を取得
+        following = []
+        index = 1
 
-        # ページのHTMLを取得
-        html = driver.page_source
-        print("フォローページのHTMLを取得しました。")
+        while True:
+            try:
+                xpath = f'//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div[{index}]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div[1]/a/div/div/span'
+                username_element = driver.find_element(By.XPATH, xpath)
+                username = username_element.text
+                following.append(username)
+                print(f"取得したユーザーネーム: {username}")
+                index += 1
+                time.sleep(1)
+            except Exception:
+                if not following:
+                    print(f"{account_name} のフォローリストが空です。")
+                else:
+                    print("全てのフォローを取得しました。")
+                break
 
-        # BeautifulSoupでHTMLを解析
-        soup = BeautifulSoup(html, "html.parser")
-        followers = []
-        for user_cell in soup.find_all("div", {"data-testid": "UserCell"}):
-            user_link = user_cell.find("a", href=True)
-            if user_link:
-                username = user_link["href"].split("/")[-1]
-                followers.append(username)
+        filename = f"{account_name}_following.txt"
+        with open(filename, "w", encoding="utf-8") as file:
+            for user in following:
+                file.write(user + "\n")
+        print(f"取得したフォローのユーザーネームを{filename}に保存しました。")
 
-        return followers
+        # 探索済みアカウントとして記録
+        save_explored_account(account_name)
+
+        return following
 
     finally:
         driver.quit()
 
-# メイン処理
+
+def recursive_fetch(account_name, depth=1, max_depth=3):
+    """
+    再帰的にフォローリストを取得する。
+    depth: 現在の探索の深さ
+    max_depth: 最大の探索の深さ
+    """
+    explored_accounts = load_explored_accounts()
+
+    if account_name in explored_accounts:
+        print(f"すでに探索済みのアカウント: {account_name}")
+        return
+
+    if depth > max_depth:
+        print(f"最大深度に到達しました: {account_name}")
+        return
+
+    print(f"現在のアカウント: {account_name}, 深度: {depth}")
+
+    following_list = fetch_following(account_name)
+
+    if not following_list:
+        print(f"{account_name} のフォローリストが空のため次へ進みます。")
+        return
+
+    for following_account in following_list:
+        recursive_fetch(following_account, depth=depth + 1, max_depth=max_depth)
+
+
 if __name__ == "__main__":
-    followers = fetch_followers_with_selenium()
-    if followers:
-        print("取得したフォロワーID一覧:")
-        print(followers)
-    else:
-        print("フォロワーページにアクセスできませんでした。")
+    # 初期アカウント名を指定
+    start_account = "cloudproject_ad"
+    recursive_fetch(start_account)
