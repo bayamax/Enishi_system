@@ -10,9 +10,13 @@ PASSWORD = "F=M*a+C*v^2"
 
 # Chromeオプション設定
 options = webdriver.ChromeOptions()
-#options.add_argument("--headless")  # ヘッドレスモード（画面なし）
-options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
+options.add_argument("--disable-gpu")
+options.add_argument("--disable-software-rasterizer")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-vulkan")
+options.add_argument("--headless")
+options.add_argument("--display=:99")
 
 # ChromeDriverの起動
 service = Service("/usr/local/bin/chromedriver")
