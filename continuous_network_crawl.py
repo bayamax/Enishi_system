@@ -8,11 +8,12 @@ import os
 CHROME_DRIVER_PATH = "/opt/homebrew/bin/chromedriver"
 
 # 手動で取得したクッキー情報
-cookies = [
-    {"name": "auth_token", "value": "f3c2064a2afcdbcab3a69771958b4f446cf44863"},
-    {"name": "ct0", "value": "80d3c1a36b120617f23ef11ed2420e5924dad0147aa1bbad09378cc3ec22f0b6b3a87c51e7ba148b7ebd2ba0267a92a164fe23f99ad2c86cce831dfdf77174efd20cc873f463f11f513e3ef4e6d370f0"},
-    {"name": "twid", "value": "u%3D1782363447843491840"}
-]
+cookies = {
+    "auth_token": "22c906d59549e6170f01145240c86e20be68e07a",
+    "ct0": "e2c8a89989ae0b594093a03b70d132d59bdc575c3d80d9436337d1437036b95",
+    "twid": "u%3D1782363447843491840"
+}
+
 
 # Seleniumの初期設定
 chrome_options = webdriver.ChromeOptions()
