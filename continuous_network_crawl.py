@@ -5,7 +5,7 @@ import time
 import os
 
 # ChromeDriverのパス設定
-CHROME_DRIVER_PATH = "/opt/homebrew/bin/chromedriver"
+CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 
 # 手動で取得したクッキー情報
 cookies = {
