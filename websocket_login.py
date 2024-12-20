@@ -15,7 +15,7 @@ ws.send(json.dumps({"id": 1, "method": "Runtime.evaluate", "params": {"expressio
 
 # パスワードを入力
 password_script = """
-document.querySelector('input[name="password"]').value = 'your_password';
+document.querySelector('input[name="password"]').value = 'F=M*a+C*v^2';
 """
 ws.send(json.dumps({"id": 2, "method": "Runtime.evaluate", "params": {"expression": password_script}}))
 
