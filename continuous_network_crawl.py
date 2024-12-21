@@ -30,141 +30,180 @@ chrome_options.add_experimental_option("useAutomationExtension", False)
 # 探索済みアカウントを保存するファイル
 explored_accounts_file = "explored_accounts.txt"
 
+# Seleniumの初期設定
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+chrome_options.add_experimental_option("useAutomationExtension", False)
 
 def load_explored_accounts():
     """
     ファイルから探索済みアカウント名を読み込む。
     """
-    if not os.path.exists(explored_accounts_file):
+    if not os.path.exists(EXPLORED_ACCOUNTS_FILE):
         return set()
 
-    with open(explored_accounts_file, "r", encoding="utf-8") as file:
+    with open(EXPLORED_ACCOUNTS_FILE, "r", encoding="utf-8") as file:
         return set(line.strip() for line in file.readlines())
-
 
 def save_explored_account(account_name):
     """
     探索済みアカウント名をファイルに追加する。
     """
-    with open(explored_accounts_file, "a", encoding="utf-8") as file:
+    with open(EXPLORED_ACCOUNTS_FILE, "a", encoding="utf-8") as file:
         file.write(account_name + "\n")
 
+def save_following_list(account_name, following_list):
+    """
+    フォローリストをアカウント名に基づいたファイルに保存する。
+    """
+    sanitized_account_name = account_name.replace("@", "").replace("/", "_")  # ファイル名に使える形式に修正
+    filename = f"{sanitized_account_name}_following.txt"
 
-def scroll_until_loaded(driver, max_scrolls=100):
+    with open(filename, "w", encoding="utf-8") as file:
+        for following_account in following_list:
+            file.write(following_account + "\n")
+
+def twitter_login(driver):
     """
-    ページの高さが変化しなくなるまでスクロールを繰り返す。
-    max_scrolls: 最大スクロール回数（無限ループ防止用）
+    Twitterに自動ログインする（電話番号対応版）。
     """
-    scrolls = 0
-    last_height = driver.execute_script("return document.body.scrollHeight")
-    while scrolls < max_scrolls:
+    driver.get("https://x.com/login")
+    time.sleep(10)
+
+    try:
+        username_input = driver.find_element(By.NAME, "text")
+        username_input.send_keys(TWITTER_USERNAME)
+        username_input.send_keys(Keys.RETURN)
+        time.sleep(5)
+
+        try:
+            phone_input = driver.find_element(By.NAME, "text")
+            phone_input.send_keys(TWITTER_PHONE)
+            phone_input.send_keys(Keys.RETURN)
+            time.sleep(5)
+        except Exception:
+            print("電話番号の入力が求められませんでした。スキップします。")
+
+        password_input = driver.find_element(By.NAME, "password")
+        password_input.send_keys(TWITTER_PASSWORD)
+        password_input.send_keys(Keys.RETURN)
+        time.sleep(10)
+
+        print("Twitterにログインしました。")
+    except Exception as e:
+        print(f"ログイン中にエラーが発生しました: {e}")
+
+def navigate_to_search_page(driver):
+    """
+    検索ページに移動する。
+    """
+    search_page_xpath = '//*[@id="react-root"]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[2]/div'
+    search_page_link = driver.find_element(By.XPATH, search_page_xpath)
+    search_page_link.click()
+    time.sleep(5)
+
+def search_and_open_account(driver, account_name):
+    """
+    指定のアカウントを検索し、そのアカウントページを開く。
+    """
+    search_input = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, 'input[placeholder="Search"]'))
+    )
+    search_input.clear()
+    search_input.send_keys(account_name)
+    search_input.send_keys(Keys.RETURN)
+    time.sleep(5)
+
+    first_account_xpath = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[3]/section/div/div/div[3]/div/div/button/div/div[2]/div[1]/div[1]/div/div[1]/a/div/div[1]'
+    first_account_link = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, first_account_xpath))
+    )
+    first_account_link.click()
+    time.sleep(5)
+
+def navigate_to_following_list(driver):
+    """
+    アカウントページからフォローリストページへ移動する。
+    """
+    following_link_xpath = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div/div[5]/div[1]/a'
+    following_link = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, following_link_xpath))
+    )
+    following_link.click()
+    time.sleep(5)
+
+def fetch_following_accounts(driver):
+    """
+    フォローリストからアカウント名を取得する。
+    """
+    scroll_pause_time = 2
+    scroll_height = driver.execute_script("return document.body.scrollHeight")
+    following_accounts = []
+
+    while True:
+        accounts = driver.find_elements(By.XPATH, '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div/a/div/div/span')
+        for account in accounts:
+            account_name = account.text.strip()
+            if account_name.startswith("@") and account_name not in following_accounts:
+                following_accounts.append(account_name)
+
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(3)
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            print("ページの高さが変化しないため、スクロールを停止します。")
+        time.sleep(scroll_pause_time)
+        new_scroll_height = driver.execute_script("return document.body.scrollHeight")
+        if new_scroll_height == scroll_height:
             break
-        last_height = new_height
-        scrolls += 1
-    print(f"最大スクロール回数: {scrolls}/{max_scrolls}")
+        scroll_height = new_scroll_height
 
+    return following_accounts
 
-def fetch_following(account_name):
+def recursive_fetch(driver, account_name, depth=1, max_depth=3, wait_time=6000):
     """
-    指定されたアカウントのフォローリストを取得し、ファイルに保存する。
+    再帰的にフォローリストを探索する。
     """
+    if depth > max_depth:
+        return
+
     explored_accounts = load_explored_accounts()
-
     if account_name in explored_accounts:
-        print(f"すでに探索済みのアカウント: {account_name}")
-        return []
+        return
 
+    save_explored_account(account_name)
+
+    try:
+        navigate_to_search_page(driver)
+        search_and_open_account(driver, account_name)
+        navigate_to_following_list(driver)
+
+        following_accounts = fetch_following_accounts(driver)
+
+        # フォローリストが空の場合
+        if not following_accounts:
+            print(f"{account_name} はフォロワーがいません。スキップします。")
+            time.sleep(wait_time)  # 一定時間停止
+            return
+
+        save_following_list(account_name, following_accounts)
+
+        for following_account in following_accounts:
+            if following_account not in explored_accounts:
+                recursive_fetch(driver, following_account, depth=depth + 1, max_depth=max_depth, wait_time=wait_time)
+
+    except Exception as e:
+        print(f"エラーが発生しました: {e}")
+        time.sleep(wait_time)  # エラー時にも一定時間停止してリトライ防止
+
+def main():
     service = Service(CHROME_DRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
-        # フォローリストページのURL
-        url = f"https://x.com/{account_name}/following"
-        print(f"フォローしている人のページにアクセスします: {url}")
-
-        driver.get("https://x.com")
-        time.sleep(10)
-
-        # クッキーを追加
-        for cookie in cookies:
-            driver.add_cookie(cookie)
-
-        # フォローリストページにアクセス
-        driver.get(url)
-        time.sleep(10)
-
-        # ページをスクロールして全てのフォローをロード
-        scroll_until_loaded(driver, max_scrolls=100)
-
-        # ページのフォロー情報を取得
-        following = []
-        index = 1
-
-        while True:
-            try:
-                xpath = f'//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div[{index}]/div/div/button/div/div[2]/div[1]/div[1]/div/div[2]/div[1]/a/div/div/span'
-                username_element = driver.find_element(By.XPATH, xpath)
-                username = username_element.text
-                following.append(username)
-                print(f"取得したユーザーネーム: {username}")
-                index += 1
-                time.sleep(1)
-            except Exception:
-                if not following:
-                    print(f"{account_name} のフォローリストが空です。")
-                else:
-                    print("全てのフォローを取得しました。")
-                break
-
-        filename = f"{account_name}_following.txt"
-        with open(filename, "w", encoding="utf-8") as file:
-            for user in following:
-                file.write(user + "\n")
-        print(f"取得したフォローのユーザーネームを{filename}に保存しました。")
-
-        # 探索済みアカウントとして記録
-        save_explored_account(account_name)
-
-        return following
-
+        twitter_login(driver)
+        recursive_fetch(driver, START_ACCOUNT)
     finally:
         driver.quit()
 
-
-def recursive_fetch(account_name, depth=1, max_depth=3):
-    """
-    再帰的にフォローリストを取得する。
-    depth: 現在の探索の深さ
-    max_depth: 最大の探索の深さ
-    """
-    explored_accounts = load_explored_accounts()
-
-    if account_name in explored_accounts:
-        print(f"すでに探索済みのアカウント: {account_name}")
-        return
-
-    if depth > max_depth:
-        print(f"最大深度に到達しました: {account_name}")
-        return
-
-    print(f"現在のアカウント: {account_name}, 深度: {depth}")
-
-    following_list = fetch_following(account_name)
-
-    if not following_list:
-        print(f"{account_name} のフォローリストが空のため次へ進みます。")
-        return
-
-    for following_account in following_list:
-        recursive_fetch(following_account, depth=depth + 1, max_depth=max_depth)
-
-
 if __name__ == "__main__":
-    # 初期アカウント名を指定
-    start_account = "nori_sol1"
-    recursive_fetch(start_account)
+    main()
