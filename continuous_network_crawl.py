@@ -30,13 +30,7 @@ chrome_options.add_experimental_option("useAutomationExtension", False)
 # 探索済みアカウントを保存するファイル
 explored_accounts_file = "explored_accounts.txt"
 
-# Seleniumの初期設定
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-chrome_options.add_experimental_option("useAutomationExtension", False)
+
 
 def load_explored_accounts():
     """
