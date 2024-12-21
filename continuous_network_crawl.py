@@ -18,6 +18,11 @@ START_ACCOUNT = "@setagayaj_swsc"
 
 EXPLORED_ACCOUNTS_FILE = "explored_accounts.txt"
 
+# Twitterのログイン情報
+TWITTER_USERNAME = "cloudproject_ad"  # アカウント名
+TWITTER_PHONE = "09067372699"  # 電話番号
+TWITTER_PASSWORD = "F=M*a+C*v^2"  # パスワード
+
 # Seleniumの初期設定
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--no-sandbox")
