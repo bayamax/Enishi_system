@@ -14,7 +14,7 @@ cookies = [
     {"name": "twid", "value": "u%3D1782363447843491840"}
 ]
 
-
+START_ACCOUNT = "@setagayaj_swsc" 
 
 # Seleniumの初期設定
 chrome_options = webdriver.ChromeOptions()
