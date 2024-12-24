@@ -1,0 +1,12 @@
+@clear_hakodate
+@smartclear_ebt
+@smartclear_nsap
+@megadon_iphone
+@clear_hokudai
+@sc_asahikawa
+@clear_kotoni
+@smartclear_nsok
+@clearteine
+@smcleat_shinoro
+@iclear_toma
+@ik_phone

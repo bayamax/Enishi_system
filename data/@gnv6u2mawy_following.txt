@@ -1,0 +1,15 @@
+@ubuntu
+@Docker
+@GoogleWorkspace
+@typescript
+@FigmaJapan
+@v0
+@nextjs
+@github
+@nodejs
+@reactjs
+@ThePSF
+@Azure
+@awscloud_jp
+@googlecloud_jp
+@googlejapan

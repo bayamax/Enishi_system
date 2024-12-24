@@ -1,0 +1,14 @@
+@nisc_forecast
+@IPA_anshin
+@jnsa
+@jpcert
+@MPD_cybersec
+@METI_JPN
+@meti_chusho
+@NPA_KOHO
+@METI_chb
+@jogmec_jp
+@INPIT_jp
+@RIETIjp
+@AIST_JP
+@JETRO_info

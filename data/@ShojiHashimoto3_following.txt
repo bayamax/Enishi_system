@@ -1,0 +1,15 @@
+@PhysicsNews
+@PhysRevD
+@PhysRevLett
+@PhysicsToday
+@tsukubais
+@LHCbExperiment
+@ATLASexperiment
+@CMSExperiment
+@Fermilab
+@CERN
+@arxiv
+@inspirehep
+@symmetrymag
+@particlenews
+@LHCbPhysics
