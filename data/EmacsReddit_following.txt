@@ -1,0 +1,15 @@
+@bbatsov
+@mickeynp
+@milkypostman
+@magnars
+@emacsrookie
+@djcb
+@ecotd
+@learnemacs
+@emacs_knight
+@sachac
+@ErgoEmacs
+@emacs
+@EmacsHaiku
+@EmacsRocks
+@melpa_emacs

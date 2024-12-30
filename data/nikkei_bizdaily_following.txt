@@ -1,0 +1,9 @@
+@nikkei
+@BloombergJapan
+@WSJJapan
+@nikkeibusiness
+@dol_editors
+@nikkei_business
+@nikkei_tech
+@nikkeibpITpro
+@nikkei_veritas

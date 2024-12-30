@@ -1,0 +1,17 @@
+@tagir_valeev
+@shipilev
+@venkat_s
+@intellijidea
+@joshbloch
+@heinzkabutz
+@nipafx
+@trisha_gee
+@Java_Champions
+@headinthebox
+@TheDonRaab
+@OpenJDK
+@PeterLawrey
+@_JamesWard
+@graalvm
+@speakjava
+@mreinhold

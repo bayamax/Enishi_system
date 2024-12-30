@@ -1,0 +1,9 @@
+@jdegoes
+@rockthejvm
+@runarorama
+@FunScalaConf
+@kubukoz
+@deusaquilus
+@hmemcpy
+@alvinalexander
+@adamwarski

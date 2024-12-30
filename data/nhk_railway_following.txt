@@ -1,0 +1,15 @@
+@nhk_radio_news
+@nhk_bijutsu
+@nhk_ashitanavi
+@nhk_n_sp
+@nhk_newsoon
+@nhk_morioka
+@nhk_matsue
+@nhk_takamatsu
+@nhk_fukui
+@nhk_shizuoka_
+@nhk_sekaimachi
+@nhk_heart
+@nhk_kaisetsu
+@nhk_kurogen
+@nhk_yamagata

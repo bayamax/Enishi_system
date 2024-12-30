@@ -1,0 +1,9 @@
+@mainichi_kotoba
+@nkgendai_kotoba
+@asahi_kotoba
+@kotoba_no_genba
+@nikkeiphoto
+@nikkeivdata
+@nikkeishakai
+@nikkeiseijibu
+@tokyo_kouetsubu

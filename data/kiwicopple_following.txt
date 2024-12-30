@@ -1,0 +1,9 @@
+@supabase
+@rauchg
+@adamwathan
+@leeerob
+@jarredsumner
+@AntWilson
+@steventey
+@swyx
+@shuding_

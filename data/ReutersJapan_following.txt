@@ -1,0 +1,16 @@
+@nikkei
+@bbcnewsjapan
+@afpbbcom
+@jijicom
+@BloombergJapan
+@cnn_co_jp
+@kyodo_official
+@WSJJapan
+@Newsweek_JAPAN
+@ReutersJapanBiz
+@nikkei_market
+@KitsapCoSheriff
+@XDevelopers
+@SatoshiJournal
+@nikkei_business
+@swiftrocky

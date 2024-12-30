@@ -1,0 +1,17 @@
+@sleptogenesis
+@AIST_JP
+@RIKEN_JP
+@PlanckScale
+@yukiRPM
+@ISAS_JAXA
+@ilc_tsushin
+@kek_ipns
+@J_PARC
+@accel_kitchen
+@spring8pr
+@_kamiokalab_
+@JAEA_japan
+@ICRRpr
+@PhysicsWorld
+@SokendaiU
+@QUP_PR_EN

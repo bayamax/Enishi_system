@@ -1,0 +1,17 @@
+@allenholub
+@martinfowler
+@tottinge
+@davefarley77
+@KentBeck
+@mariofusco
+@hhariri
+@TotherAlistair
+@venkat_s
+@jessitron
+@trisha_gee
+@lefticus
+@jamesshore
+@ericniebler
+@WoodyZuill
+@meetingcpp
+@simonbrown
