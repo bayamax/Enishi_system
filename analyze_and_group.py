@@ -7,7 +7,7 @@ from networkx.algorithms import community
 from collections import Counter
 
 ##################### CFG #####################
-EDGE_FILE      = "edges_full.csv"
+EDGE_FILE      = "edges.csv"
 VEC_FILE       = "account_vectors.npy"   # dict{screen_name: np.array}
 OUT_COMM_FILE  = "communities.json"      # コミュニティ→ノード一覧
 OUT_HUB_FILE   = "community_hubs.json"   # representative/hub ノード
